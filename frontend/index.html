@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#111318">
+  <meta name="description" content="Explore live health-checked VPN nodes, build filtered subscription URLs and scan QR codes for v2rayNG, Streisand, NekoBox, Happ, v2rayN and sing-box clients.">
+  <meta name="color-scheme" content="dark">
+  <title>VPN Hub - Live subscription constructor &amp; node explorer</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5.5' fill='%23111318'/%3E%3Cpath fill='%23a8c7fa' d='M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+    <symbol id="i-copy" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></symbol>
+    <symbol id="i-qr" viewBox="0 0 24 24"><path d="M3 11h8V3H3v8zm2-6h4v4H5V5zm8-2v8h8V3h-8zm6 6h-4V5h4v4zM3 21h8v-8H3v8zm2-6h4v4H5v-4zm8-2h2v2h-2zm4 0h2v2h-2zm-2 2h2v2h-2zm-2 2h2v2h-2zm4 0h2v2h-2zm2 2h2v2h-2zm-4 2h2v2h-2zm4 0h2v2h-2zm-2-2h2v2h-2z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></symbol>
+    <symbol id="i-search-off" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/><path d="M2.1 3.51 3.51 2.1l18.39 18.39-1.41 1.41z"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-8 8s3.57 8 8 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></symbol>
+    <symbol id="i-open" viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></symbol>
+    <symbol id="i-tune" viewBox="0 0 24 24"><path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2h-6v2h6zm-6-4h2V7h4V5h-4V3h-2v6z"/></symbol>
+    <symbol id="i-dns" viewBox="0 0 24 24"><path d="M20 13H4c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h16c.55 0 1-.45 1-1v-6c0-.55-.45-1-1-1zM7 19c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM20 3H4c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h16c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1zM7 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></symbol>
+    <symbol id="i-vpn" viewBox="0 0 24 24"><path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></symbol>
+    <symbol id="i-error" viewBox="0 0 24 24"><path d="M11 15h2v2h-2zm0-8h2v6h-2zm.99-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.59 8 8-3.58 8-8 8z"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></symbol>
+    <symbol id="i-dash" viewBox="0 0 24 24"><path d="M19 13H5v-2h14v2z"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24"><path d="M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z"/></symbol>
+    <symbol id="i-rows" viewBox="0 0 24 24"><path d="M3 3h18v2H3zm0 4h18v2H3zm0 4h18v2H3zm0 4h18v2H3zm0 4h18v2H3z"/></symbol>
+    <symbol id="i-rows-wide" viewBox="0 0 24 24"><path d="M3 4h18v4H3zm0 6h18v4H3zm0 6h18v4H3z"/></symbol>
+    <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="m4 12 1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></symbol>
+  </svg>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <noscript>
+    <div class="noscript-banner">
+      <strong>JavaScript is required.</strong> This hub fetches the live node registry and builds
+      subscription URLs entirely in your browser - please enable JavaScript to use it.
+    </div>
+  </noscript>
+
+  <header class="app-bar">
+    <div class="app-bar__inner">
+      <div class="app-bar__brand">
+        <span class="app-bar__logo" aria-hidden="true">
+          <svg class="icon"><use href="#i-vpn"></use></svg>
+        </span>
+        <div class="app-bar__text">
+          <h1 class="app-bar__title">VPN Hub</h1>
+          <p class="app-bar__subtitle" id="statusLine" aria-live="polite">Connecting to the node registry…</p>
+        </div>
+      </div>
+      <div class="app-bar__stats" id="appBarStats" aria-label="Live registry statistics">
+        <div class="stat"><span class="stat__value" id="statNodes">-</span><span class="stat__label">nodes</span></div>
+        <div class="stat"><span class="stat__value" id="statCountries">-</span><span class="stat__label">countries</span></div>
+        <div class="stat"><span class="stat__value" id="statAvg">-</span><span class="stat__label">avg ping</span></div>
+        <div class="stat"><span class="stat__value" id="statBest">-</span><span class="stat__label">fastest</span></div>
+        <div class="stat"><span class="stat__value" id="statApi">-</span><span class="stat__label">api</span></div>
+      </div>
+      <div class="app-bar__actions">
+        <div class="auto-refresh" title="Auto-refresh the registry every 2 minutes">
+          <span class="auto-refresh__count" id="autoRefreshCount">2:00</span>
+          <label class="switch">
+            <input type="checkbox" id="autoRefreshToggle" checked aria-label="Auto-refresh every 2 minutes">
+            <span class="switch__track"><span class="switch__thumb"></span></span>
+          </label>
+        </div>
+        <span class="live-meta" id="lastUpdated"></span>
+        <button type="button" class="icon-button" id="refreshBtn" aria-label="Refresh nodes">
+          <svg class="icon"><use href="#i-refresh"></use></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page" id="main">
+
+    <section class="card" aria-labelledby="ctorTitle">
+      <div class="card__head">
+        <span class="card__icon" aria-hidden="true">
+          <svg class="icon"><use href="#i-tune"></use></svg>
+        </span>
+        <div class="card__heading">
+          <h2 class="card__title" id="ctorTitle">Subscription constructor</h2>
+          <p class="card__subtitle">Filter the live registry and generate a subscription URL - updates in real time</p>
+        </div>
+      </div>
+
+      <div class="card__body">
+
+        <div class="field">
+          <span class="field__label" id="formatLabel">Output format</span>
+          <div class="segmented" id="formatGroup" role="group" aria-labelledby="formatLabel">
+            <span class="segmented__glider" aria-hidden="true"></span>
+            <button type="button" class="segmented__btn is-selected" data-format="base64" aria-pressed="true">
+              <span class="segmented__check" aria-hidden="true"><svg class="icon"><use href="#i-check"></use></svg></span>
+              <span class="segmented__label">Base64</span>
+            </button>
+            <button type="button" class="segmented__btn" data-format="raw" aria-pressed="false">
+              <span class="segmented__check" aria-hidden="true"><svg class="icon"><use href="#i-check"></use></svg></span>
+              <span class="segmented__label">Raw list</span>
+            </button>
+            <button type="button" class="segmented__btn" data-format="singbox" aria-pressed="false">
+              <span class="segmented__check" aria-hidden="true"><svg class="icon"><use href="#i-check"></use></svg></span>
+              <span class="segmented__label">Sing-box</span>
+            </button>
+            <button type="button" class="segmented__btn" data-format="clash" aria-pressed="false">
+              <span class="segmented__check" aria-hidden="true"><svg class="icon"><use href="#i-check"></use></svg></span>
+              <span class="segmented__label">Clash</span>
+            </button>
+          </div>
+          <p class="field__hint" id="formatHint">Standard subscription - v2rayNG, Streisand, NekoBox, Happ, v2rayN</p>
+        </div>
+
+        <div class="field">
+          <span class="field__label" id="protoLabel">Protocol</span>
+          <div class="chipset" id="protoChips" role="group" aria-labelledby="protoLabel">
+
+          </div>
+          <div class="proxy-group">
+            <label class="switch-row">
+              <span class="switch-row__text">
+                <span class="switch-row__label">Include open proxies</span>
+                <span class="switch-row__hint" data-tip="Adds SOCKS/HTTP open proxies to the subscription output (proxies=1). Off by default so standard mobile clients keep receiving clean VPN protocols only.">SOCKS4/5 · HTTP(S) · off by default</span>
+              </span>
+              <span class="switch">
+                <input type="checkbox" id="proxiesToggle" aria-label="Include open proxies in the subscription output">
+                <span class="switch__track"><span class="switch__thumb"></span></span>
+              </span>
+            </label>
+            <div class="chipset" id="proxyChips" role="group" aria-label="Proxy protocols">
+
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="field__label" id="dpiLabel">DPI resilience</span>
+          <div class="chipset" id="dpiChips" role="group" aria-labelledby="dpiLabel">
+            <button type="button" class="chip chip--filter is-selected" data-dpi="" aria-pressed="true">
+              <span class="chip__check" aria-hidden="true"><svg class="icon"><use href="#i-check"></use></svg></span>
+              <span class="chip__label">All nodes</span>
+            </button>
+            <button type="button" class="chip chip--filter" data-dpi="reality" aria-pressed="false">
+              <span class="chip__check" aria-hidden="true"><svg class="icon"><use href="#i-check"></use></svg></span>
+              <svg class="icon chip__icon" aria-hidden="true"><use href="#i-bolt"></use></svg>
+              <span class="chip__label">Reality only (XTLS)</span>
+            </button>
+            <button type="button" class="chip chip--filter" data-dpi="high" aria-pressed="false">
+              <span class="chip__check" aria-hidden="true"><svg class="icon"><use href="#i-check"></use></svg></span>
+              <svg class="icon chip__icon" aria-hidden="true"><use href="#i-shield"></use></svg>
+              <span class="chip__label">Max protection</span>
+            </button>
+          </div>
+          <p class="field__hint">Reality = VLESS with XTLS Reality; max protection = Reality + Hysteria 2 (dpi=reality / dpi=high)</p>
+        </div>
+
+        <div class="field">
+          <span class="field__label" id="countryLabel">
+            Country
+            <span class="field__label-note" id="countriesCount"></span>
+          </span>
+          <div class="chipset chipset--scroll" id="countryChips" role="group" aria-labelledby="countryLabel">
+
+          </div>
+          <p class="field__hint">Hover a flag for the country name and node count</p>
+        </div>
+
+        <div class="field-row">
+          <div class="field field--grow">
+            <span class="field__label" id="pingLabel">Max ping</span>
+            <div class="ping-row">
+              <input class="slider" id="pingSlider" type="range" min="50" max="1000" step="10" value="1000"
+                     aria-labelledby="pingLabel" aria-valuetext="Any latency">
+              <label class="text-field text-field--compact">
+                <input id="pingInput" type="text" inputmode="numeric" autocomplete="off" value="Any"
+                       aria-label="Maximum ping in milliseconds - currently any">
+                <span class="text-field__suffix">ms</span>
+              </label>
+            </div>
+            <div class="slider-scale" aria-hidden="true">
+              <span>50 ms</span>
+              <span>1000 ms = Any</span>
+            </div>
+            <div class="ping-histogram" id="pingHistogram" aria-hidden="true"></div>
+            <p class="ping-histogram__caption" id="pingHistogramCaption"></p>
+          </div>
+
+          <div class="field field--grow">
+            <span class="field__label" id="speedLabel">Min speed</span>
+            <div class="ping-row">
+              <input class="slider" id="speedSlider" type="range" min="0" max="200" step="5" value="0"
+                     aria-labelledby="speedLabel" aria-valuetext="No minimum speed">
+              <label class="text-field text-field--compact">
+                <input id="speedInput" type="text" inputmode="numeric" autocomplete="off" value="Any"
+                       aria-label="Minimum download speed in Mbps - currently any">
+                <span class="text-field__suffix">Mbps</span>
+              </label>
+            </div>
+            <div class="slider-scale" aria-hidden="true">
+              <span>off</span>
+              <span>200 Mbps</span>
+            </div>
+            <p class="ping-histogram__caption" id="speedCaption"></p>
+          </div>
+
+          <div class="field">
+            <span class="field__label" id="limitLabel">Node limit</span>
+            <div class="chipset" id="limitChips" role="group" aria-labelledby="limitLabel" style="margin-bottom:10px">
+              <button type="button" class="chip chip--filter is-selected" data-limit="0" aria-pressed="true"
+                      title="Backend default: the 100 fastest configs">
+                <span class="chip__check" aria-hidden="true"><svg class="icon"><use href="#i-check"></use></svg></span>
+                <span class="chip__label">Default</span>
+              </button>
+              <button type="button" class="chip chip--filter" data-limit="10" aria-pressed="false">
+                <span class="chip__check" aria-hidden="true"><svg class="icon"><use href="#i-check"></use></svg></span>
+                <span class="chip__label">10</span>
+              </button>
+              <button type="button" class="chip chip--filter" data-limit="20" aria-pressed="false">
+                <span class="chip__check" aria-hidden="true"><svg class="icon"><use href="#i-check"></use></svg></span>
+                <span class="chip__label">20</span>
+              </button>
+              <button type="button" class="chip chip--filter" data-limit="50" aria-pressed="false">
+                <span class="chip__check" aria-hidden="true"><svg class="icon"><use href="#i-check"></use></svg></span>
+                <span class="chip__label">50</span>
+              </button>
+              <button type="button" class="chip chip--filter" data-limit="-1" aria-pressed="false"
+                      title="No limit - lifts the backend cap (limit=all)">
+                <span class="chip__check" aria-hidden="true"><svg class="icon"><use href="#i-check"></use></svg></span>
+                <span class="chip__label">All</span>
+              </button>
+            </div>
+            <label class="text-field text-field--compact" style="width:150px">
+              <input id="limitInput" type="text" inputmode="numeric" autocomplete="off" placeholder="Custom…"
+                     aria-label="Custom node limit">
+            </label>
+            <p class="field__hint">Without a limit the backend serves the 100 fastest configs</p>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="field__label" id="routeLabel">Routing</span>
+          <label class="switch-row" id="routeRow">
+            <span class="switch-row__text">
+              <span class="switch-row__label">Bypass RU (smart routing)</span>
+              <span class="switch-row__hint" data-tip="Russian services (Gosuslugi, banks, .ru, VK, Yandex) open directly without VPN, while blocked sites go through the proxy">split-tunneling for RU traffic</span>
+            </span>
+            <span class="switch">
+              <input type="checkbox" id="bypassToggle" aria-label="Bypass RU smart routing">
+              <span class="switch__track"><span class="switch__thumb"></span></span>
+            </span>
+          </label>
+          <p class="field__hint" id="routeHint">Adds route=bypass_ru - available for Sing-box and Clash formats</p>
+        </div>
+
+        <div class="output">
+          <div class="output__head">
+            <span class="field__label">Your subscription URL</span>
+            <span class="output__head-meta">
+              <span class="output__count" id="outputCount"></span>
+              <span class="output__badge" id="formatBadge">/sub</span>
+            </span>
+          </div>
+
+          <div class="url-box">
+            <span class="url-box__icon" aria-hidden="true">
+              <svg class="icon"><use href="#i-link"></use></svg>
+            </span>
+            <input class="url-box__input" id="urlField" type="text" readonly
+                   aria-label="Generated subscription URL" spellcheck="false">
+            <button type="button" class="icon-button" id="copyUrlBtn" aria-label="Copy subscription URL" data-tip="Copy link">
+              <svg class="icon"><use href="#i-copy"></use></svg>
+            </button>
+          </div>
+
+          <div class="btn-row">
+            <button type="button" class="btn btn--filled" id="copyLinkBtn">
+              <svg class="icon" aria-hidden="true"><use href="#i-copy"></use></svg>
+              <span>Copy link</span>
+            </button>
+            <button type="button" class="btn btn--tonal" id="qrToggleBtn" aria-expanded="false" aria-controls="qrPanel">
+              <svg class="icon" aria-hidden="true"><use href="#i-qr"></use></svg>
+              <span id="qrToggleLabel">QR code</span>
+            </button>
+            <a class="btn btn--outlined" id="openLinkBtn" href="https://free.vpn.onlysq.me/sub"
+               target="_blank" rel="noopener noreferrer">
+              <svg class="icon" aria-hidden="true"><use href="#i-open"></use></svg>
+              <span>Open</span>
+            </a>
+          </div>
+
+          <div class="qr-panel" id="qrPanel" hidden>
+            <div class="qr-panel__grid">
+              <div class="qr-frame" id="qrFrame"></div>
+              <div class="qr-meta">
+                <h3 class="qr-meta__title">Scan to import</h3>
+                <p class="qr-meta__text">
+                  Point your mobile client's scanner at the code to import this exact selection.
+                  The vector QR re-renders instantly whenever a filter changes.
+                </p>
+                <p class="qr-meta__summary" id="qrSummary" aria-live="polite"></p>
+                <p class="qr-meta__caption" id="qrCaption"></p>
+                <button type="button" class="btn btn--text" id="qrDownloadBtn">
+                  <svg class="icon" aria-hidden="true"><use href="#i-download"></use></svg>
+                  <span>Download SVG</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="explorerTitle">
+      <div class="card__head">
+        <span class="card__icon" aria-hidden="true">
+          <svg class="icon"><use href="#i-dns"></use></svg>
+        </span>
+        <div class="card__heading">
+          <h2 class="card__title" id="explorerTitle">Live nodes</h2>
+          <p class="card__subtitle" id="explorerStats" aria-live="polite">Fetching live registry…</p>
+        </div>
+        <div class="card__head-actions">
+          <label class="text-field text-field--search" id="searchField">
+            <span class="text-field__icon" aria-hidden="true">
+              <svg class="icon"><use href="#i-search"></use></svg>
+            </span>
+            <input id="searchInput" type="search" placeholder="Search host, IP or country…"
+                   autocomplete="off" aria-label="Search nodes by server host, IP or country">
+            <kbd class="search-kbd" aria-hidden="true">/</kbd>
+            <button type="button" class="icon-button icon-button--small search-clear" id="searchClear"
+                    aria-label="Clear search" tabindex="-1">
+              <svg class="icon"><use href="#i-close"></use></svg>
+            </button>
+          </label>
+          <button type="button" class="icon-button" id="densityBtn" aria-label="Toggle row density"
+                  aria-pressed="false" data-tip="Compact rows">
+            <svg class="icon"><use href="#i-rows"></use></svg>
+          </button>
+          <div class="menu-anchor">
+            <button type="button" class="icon-button" id="exportBtn" aria-haspopup="menu"
+                    aria-expanded="false" aria-label="Export current view" data-tip="Export view">
+              <svg class="icon"><use href="#i-download"></use></svg>
+            </button>
+            <div class="menu" id="exportMenu" role="menu" aria-label="Export options" hidden>
+              <button type="button" class="menu__item" role="menuitem" data-export="json">
+                <svg class="icon" aria-hidden="true"><use href="#i-copy"></use></svg>Copy JSON
+              </button>
+              <button type="button" class="menu__item" role="menuitem" data-export="csv">
+                <svg class="icon" aria-hidden="true"><use href="#i-copy"></use></svg>Copy CSV
+              </button>
+              <button type="button" class="menu__item" role="menuitem" data-export="csv-file">
+                <svg class="icon" aria-hidden="true"><use href="#i-download"></use></svg>Download CSV
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="active-filters" id="activeFilters" hidden aria-label="Active filters"></div>
+
+      <div class="bulk-bar" id="bulkBar" hidden>
+        <span class="bulk-bar__count" id="bulkCount">0 selected</span>
+        <div class="bulk-bar__actions">
+          <button type="button" class="btn btn--tonal" id="bulkCopyUris">
+            <svg class="icon" aria-hidden="true"><use href="#i-copy"></use></svg><span>Copy URIs</span>
+          </button>
+          <button type="button" class="btn btn--tonal" id="bulkCopyB64">
+            <svg class="icon" aria-hidden="true"><use href="#i-copy"></use></svg><span>Copy base64</span>
+          </button>
+          <button type="button" class="btn btn--outlined" id="bulkDownload">
+            <svg class="icon" aria-hidden="true"><use href="#i-download"></use></svg><span>.txt</span>
+          </button>
+          <button type="button" class="btn btn--text" id="bulkClear"><span>Clear</span></button>
+        </div>
+      </div>
+
+      <div class="card__body card__body--flush">
+
+        <div id="tableWrap" hidden>
+          <div class="table-scroll">
+            <table class="data-table" id="nodesTable">
+              <thead>
+                <tr>
+                  <th scope="col" aria-sort="none">
+                    <label class="checkbox th-select" title="Select all visible nodes">
+                      <input type="checkbox" id="selectAllCb" aria-label="Select all visible nodes">
+                      <span class="checkbox__box" aria-hidden="true">
+                        <svg class="icon checkbox__check"><use href="#i-check"></use></svg>
+                        <svg class="icon checkbox__dash"><use href="#i-dash"></use></svg>
+                      </span>
+                    </label>
+                    <button type="button" class="th-btn" data-sort="country">
+                      Country <svg class="icon" aria-hidden="true"><use href="#i-arrow-up"></use></svg>
+                    </button>
+                  </th>
+                  <th scope="col" aria-sort="none">
+                    <button type="button" class="th-btn" data-sort="proto">
+                      Protocol <svg class="icon" aria-hidden="true"><use href="#i-arrow-up"></use></svg>
+                    </button>
+                  </th>
+                  <th scope="col" aria-sort="ascending">
+                    <button type="button" class="th-btn is-sorted" data-sort="rtt">
+                      Ping <svg class="icon" aria-hidden="true"><use href="#i-arrow-up"></use></svg>
+                    </button>
+                  </th>
+                  <th scope="col" class="th--speed" aria-sort="none">
+                    <button type="button" class="th-btn" data-sort="speed">
+                      Speed <svg class="icon" aria-hidden="true"><use href="#i-arrow-up"></use></svg>
+                    </button>
+                  </th>
+                  <th scope="col" aria-sort="none">
+                    <button type="button" class="th-btn" data-sort="server">
+                      Server <svg class="icon" aria-hidden="true"><use href="#i-arrow-up"></use></svg>
+                    </button>
+                  </th>
+                  <th scope="col" class="th--exit" aria-sort="none">
+                    <button type="button" class="th-btn" data-sort="exitIp">
+                      Exit IP <svg class="icon" aria-hidden="true"><use href="#i-arrow-up"></use></svg>
+                    </button>
+                  </th>
+                  <th scope="col" class="th--actions"><span class="visually-hidden">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody id="nodesBody"></tbody>
+            </table>
+          </div>
+          <div class="table-footer" id="tableFooter" hidden>
+            <div class="latency-legend" aria-hidden="true">
+              <span class="latency-legend__item"><i class="latency-legend__sw latency-legend__sw--low"></i>&lt; 150 ms</span>
+              <span class="latency-legend__item"><i class="latency-legend__sw latency-legend__sw--mid"></i>150–349 ms</span>
+              <span class="latency-legend__item"><i class="latency-legend__sw latency-legend__sw--high"></i>&ge; 350 ms</span>
+            </div>
+            <span class="table-footer__text" id="tableFooterText"></span>
+          </div>
+        </div>
+
+        <div class="show-more" id="showMoreWrap" hidden>
+          <button type="button" class="btn btn--text" id="showMoreBtn"></button>
+        </div>
+
+        <div class="state-panel skeleton" id="loadingState" style="padding-top:8px;gap:0;align-items:stretch">
+          <div class="sk-row"><span class="sk sk--circle"></span><span class="sk sk--badge"></span><span class="sk"></span><span class="sk sk--short"></span><span class="sk sk--short"></span><span class="sk sk--short"></span><span class="sk sk--circle" style="width:24px;height:24px"></span></div>
+          <div class="sk-row"><span class="sk sk--circle"></span><span class="sk sk--badge"></span><span class="sk"></span><span class="sk sk--short"></span><span class="sk sk--short"></span><span class="sk sk--short"></span><span class="sk sk--circle" style="width:24px;height:24px"></span></div>
+          <div class="sk-row"><span class="sk sk--circle"></span><span class="sk sk--badge"></span><span class="sk"></span><span class="sk sk--short"></span><span class="sk sk--short"></span><span class="sk sk--short"></span><span class="sk sk--circle" style="width:24px;height:24px"></span></div>
+          <div class="sk-row"><span class="sk sk--circle"></span><span class="sk sk--badge"></span><span class="sk"></span><span class="sk sk--short"></span><span class="sk sk--short"></span><span class="sk sk--short"></span><span class="sk sk--circle" style="width:24px;height:24px"></span></div>
+          <div class="sk-row"><span class="sk sk--circle"></span><span class="sk sk--badge"></span><span class="sk"></span><span class="sk sk--short"></span><span class="sk sk--short"></span><span class="sk sk--short"></span><span class="sk sk--circle" style="width:24px;height:24px"></span></div>
+          <div class="sk-row"><span class="sk sk--circle"></span><span class="sk sk--badge"></span><span class="sk"></span><span class="sk sk--short"></span><span class="sk sk--short"></span><span class="sk sk--short"></span><span class="sk sk--circle" style="width:24px;height:24px"></span></div>
+          <div class="sk-row"><span class="sk sk--circle"></span><span class="sk sk--badge"></span><span class="sk"></span><span class="sk sk--short"></span><span class="sk sk--short"></span><span class="sk sk--short"></span><span class="sk sk--circle" style="width:24px;height:24px"></span></div>
+          <div class="sk-row"><span class="sk sk--circle"></span><span class="sk sk--badge"></span><span class="sk"></span><span class="sk sk--short"></span><span class="sk sk--short"></span><span class="sk sk--short"></span><span class="sk sk--circle" style="width:24px;height:24px"></span></div>
+        </div>
+
+        <div class="state-panel" id="errorState" hidden>
+          <span class="state-panel__icon" aria-hidden="true">
+            <svg class="icon"><use href="#i-error"></use></svg>
+          </span>
+          <h3 class="state-panel__title">Couldn&rsquo;t load live nodes</h3>
+          <p class="state-panel__text" id="errorText">Something went wrong while contacting the node registry.</p>
+          <button type="button" class="btn btn--tonal" id="retryBtn">
+            <svg class="icon" aria-hidden="true"><use href="#i-refresh"></use></svg>
+            <span>Try again</span>
+          </button>
+        </div>
+
+        <div class="state-panel" id="emptyState" hidden>
+          <span class="state-panel__icon" aria-hidden="true">
+            <svg class="icon"><use href="#i-search-off"></use></svg>
+          </span>
+          <h3 class="state-panel__title" id="emptyTitle">No nodes match your filters</h3>
+          <p class="state-panel__text">
+            Nothing in the live registry satisfies this combination. Try widening the ping limit,
+            removing a country or protocol chip, or clearing the search.
+          </p>
+          <button type="button" class="btn btn--tonal" id="clearFiltersBtn">
+            <svg class="icon" aria-hidden="true"><use href="#i-close"></use></svg>
+            <span>Clear all filters</span>
+          </button>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="page-footer">
+    <div class="page-footer__inner">
+      <span>
+        Node data is fetched live from
+        <a href="https://free.vpn.onlysq.me/api/nodes" target="_blank" rel="noopener noreferrer">free.vpn.onlysq.me</a>
+        and health-checked server-side before publication.
+      </span>
+      <span>
+        Free public service - no uptime or logging guarantees. Comply with the laws of your jurisdiction.
+      </span>
+    </div>
+  </footer>
+
+  <div class="dialog-scrim" id="dialogScrim" hidden>
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+      <h3 class="dialog__title" id="dialogTitle">Node QR code</h3>
+      <div class="qr-frame qr-frame--dialog" id="dialogQrFrame"></div>
+      <p class="dialog__meta" id="dialogMeta"></p>
+      <code class="dialog__uri" id="dialogUri"></code>
+      <div class="dialog__actions">
+        <button type="button" class="btn btn--text" id="dialogCopyBtn">
+          <svg class="icon" aria-hidden="true"><use href="#i-copy"></use></svg><span>Copy URI</span>
+        </button>
+        <button type="button" class="btn btn--tonal" id="dialogCloseBtn"><span>Close</span></button>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" class="fab" id="toTopFab" aria-label="Back to top" tabindex="-1">
+    <svg class="icon" aria-hidden="true"><use href="#i-arrow-up"></use></svg>
+  </button>
+
+  <div class="snackbar-host" id="snackbarHost" aria-live="polite"></div>
+
+  <script src="js/qr-renderer.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/constructor.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
